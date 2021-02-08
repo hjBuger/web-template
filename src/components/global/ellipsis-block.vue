@@ -5,10 +5,12 @@
 <script>
 export default {
     props: {
+		// 文本
         text: {
             type: String,
             default: ''
-        },
+		},
+		// 省略'...'替换的字数
         replaceNum: {
             type: [Number, String],
             default: 2
