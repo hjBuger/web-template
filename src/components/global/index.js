@@ -9,14 +9,14 @@ const requireComponent = require.context(
     // 是否查询其子目录
     false,
     // 匹配基础组件文件名的正则表达式
-    /^(?!\.\/index\.vue).*\.vue$/
+    /^(?!\.\/index\.vue).*\.(vue|js)$/
 )
 
 // 查当前目录及子目录下的index.vue
 const requireComponentChild = require.context(
     './',
     true,
-    /index\.vue$/
+    /index\.(vue|js)$/
 )
 
 let requireComponentList = handleRequire(requireComponent)

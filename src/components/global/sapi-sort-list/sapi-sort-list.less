@@ -1,0 +1,50 @@
+.sapi-sort-list{
+    .sapi-sort-list_empty-holder{
+        width: 100%;
+        height: 40px;
+        position: relative;
+        &:after{
+            content: "暂无数据";
+            display: block;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 14px;
+            color: #afaeae;
+            user-select: none;
+        }
+    }
+}
+.sapi-sort-row{
+    height: 40px;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border-bottom: 1px solid transparent;
+    color: #333333;
+    font-size: 14px;
+    background: #ffffff;
+
+    &.sapi-sort-row-border{
+        border-color: #E8E8E8;
+    }
+
+    .sapi-sort-row-content{
+        flex: 1;
+        display: flex;
+        justify-content: flex-start;
+    }
+
+    .sapi-sort-row-handle{
+        flex-shrink: 0;
+        margin-left: 10px;
+    }
+
+    &.sapi-sort-list_sortable-row{
+        color: #458aff;
+        border-color: #458aff;
+        z-index: 210;
+    }
+}
