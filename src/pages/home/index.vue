@@ -1,6 +1,6 @@
 <template>
     <div class="home">
-		<sapi-sort-list v-model="list" :use-drag-handle="true" drag-icon="el-icon-menu" :border="true" @sort-end="sortEnd">
+		<!-- <sapi-sort-list v-model="list" :use-drag-handle="false" drag-icon="el-icon-menu" :border="true" @sort-end="sortEnd">
 			<sapi-sort-row
 				v-for="(item, index) in list"
 				:index="index"
@@ -9,7 +9,9 @@
 			>
 				{{item.value}}
 			</sapi-sort-row>
-		</sapi-sort-list>
+		</sapi-sort-list> -->
+		<input type="text" v-model="testText">
+		<input type="text" v-model="py">
     </div>
 </template>
 
@@ -27,7 +29,14 @@ export default {
 				{id: 4, value: 4},
 				{id: 5, value: 5},
 				{id: 6, value: 6}
-			]
+			],
+			params: {},
+			testText: ''
+		}
+	},
+	computed: {
+		py () {
+			return this.test(this.testText) 
 		}
 	},
 	methods: {

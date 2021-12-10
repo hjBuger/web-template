@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
+    "dev": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "test:unit": "vue-cli-service test:unit",
-    "dev": "vue-cli-service serve"
+    "test:unit": "vue-cli-service test:unit"
   },
   "dependencies": {
     "babel-helper-vue-jsx-merge-props": "^2.0.3",
