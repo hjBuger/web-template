@@ -10,13 +10,12 @@
 				{{item.value}}
 			</sapi-sort-row>
 		</sapi-sort-list> -->
-		<input type="text" v-model="testText">
-		<input type="text" v-model="py">
+		首页
     </div>
 </template>
 
 <script>
-
+import VCT from '@/static/js/vmConstructor'
 export default {
 	name: 'Home',
 	components: {},
@@ -34,15 +33,9 @@ export default {
 			testText: ''
 		}
 	},
-	computed: {
-		py () {
-			return this.test(this.testText) 
-		}
-	},
-	methods: {
-		sortEnd (ev) {
-			console.log('sortEnd: ', ev)
-		}
+	created () {
+		this.VCT = new VCT()
+		console.log('VCT: ', this.VCT)
 	}
 }
 </script>
