@@ -3,15 +3,10 @@ const InputColumn = () => import('./input-column')
 export default {
     functional: true,
     props: {
-        // 要编辑的行的key值
+        // 编辑的行的id值
         editRow: {
             type: [Number, String],
             default: ''
-        },
-        // 表格rowKey
-        rowKey: {
-            type: String,
-            default: 'id'
         }
     },
     render (h, context) {
@@ -26,6 +21,7 @@ export default {
             }
             return style
         }
+
         // 获取类
         const getClass = () => {
             const classArr = []
@@ -38,43 +34,50 @@ export default {
             return classArr
         }
 
-        const attrs = context.data.attrs
-        const wrapProps = context.props
-        const rowKey = wrapProps.rowKey || 'id'
-        const style = getStyle()
-        const classModel = getClass()
-        const useTooltip = attrs ? attrs.hasOwnProperty('show-overflow-tooltip') ? attrs['show-overflow-tooltip'] !== false : false : false
-
-        // 作用域插槽
-        const scopedSlots = {
-            default: props => {
-                const editable = props.row[rowKey] === wrapProps.editRow
-                const slot = editable ? 'input' : 'default'
-                const defaultSlot = context.scopedSlots.default ? context.scopedSlots.default(props) : attrs.prop ? props.row[attrs.prop] : ''
-                const template = context.scopedSlots[slot] ? context.scopedSlots[slot](props) : defaultSlot
-                return !editable || !useTooltip ? template : h(InputColumn, {
-                    props: {
-                        editable: true
-                    },
-                    scopedSlots: {
-                        input: () => template
-                    }
-                })
-            },
-            header: props => {
-                return context.scopedSlots.header ? context.scopedSlots.header(props) : attrs.label
-            }
+        // 空值判断
+        const isEmpty = (val, includeEmptyString = true) => {
+            const emptyList = [null, undefined, NaN]
+            if (includeEmptyString) emptyList.push('')
+            return emptyList.some(item => Object.is(item, val))
         }
 
+        // column属性
+        const attrs = context.data.attrs || {}
+        // 组件参数
+        const wrapProps = context.props
+        // 判断使用tooltip
+        const useTooltip = attrs.hasOwnProperty('show-overflow-tooltip') ? attrs['show-overflow-tooltip'] !== false : false
+
         return h('el-table-column', {
-            class: classModel,
-            style,
+            class: getClass(),
+            style: getStyle(),
             props: {
-                ...(attrs || {}),
-                // 主要是通过更改属性来触发响应，实际实现是在scopedSlots.header
+                ...attrs,
+                // 因为functional非响应，改变editRow不触发scopedSlots重新渲染
+                // 所以通过更改属性来触发响应，label实际实现是在scopedSlots.header
                 label: wrapProps.editRow
             },
-            scopedSlots
+            // 作用域插槽
+            scopedSlots: {
+                default: props => {
+                    const defaultSlot = context.scopedSlots.default ? context.scopedSlots.default(props) : attrs.prop ? props.row[attrs.prop] : ''
+                    const inputSlot = context.scopedSlots.input ? context.scopedSlots.input(props) : defaultSlot
+                    return h(InputColumn, {
+                        props: {
+                            editRow: wrapProps.editRow,
+                            rowProps: props,
+                            useTooltip
+                        },
+                        scopedSlots: {
+                            default: () => defaultSlot,
+                            input: () => inputSlot
+                        }
+                    })
+                },
+                header: props => {
+                    return context.scopedSlots.header ? context.scopedSlots.header(props) : isEmpty(attrs.label) ? '' : attrs.label
+                }
+            }
         })
     }
 }

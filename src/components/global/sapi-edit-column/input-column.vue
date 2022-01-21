@@ -1,42 +1,61 @@
 <script>
     export default {
+        // 注入el-table
+        inject: {
+            EL_TABLE: {
+                default: null
+            }
+        },
         props: {
-            // 可编辑
-            editable: {
-                type: Boolean,
-                default: false
+            // 行的作用域props
+            rowProps: {
+                type: Object,
+                default () {
+                    return {}
+                }
             },
-            // 默认列表使用show-overflow-tooltip
+            // 当前编辑行
+            editRow: {
+                type: String,
+                default: ''
+            },
+            // 列使用show-overflow-tooltip
             useTooltip: {
                 type: Boolean,
                 default: true
             }
         },
+        computed: {
+            editable () {
+                return this.rowProps.row[this.rowKey] === this.editRow
+            },
+            rowKey () {
+                return this.EL_TABLE && this.EL_TABLE.rowKey || 'id'
+            }
+        },
         methods: {
             // 编辑模板
             getEditTemplate (h) {
-                return h('div', {
-                    class: 'sapi-input-column_input-Wrap',
-                    on: {
-                        'mouseenter': ev => {
-                            this.hidePopper()
-                            ev.stopPropagation()
-                        },
-                        'mouseover': ev => {
-                            this.hidePopper()
-                            ev.stopPropagation()
-                        },
-                        'mouseleave': ev => {
-                            ev.stopPropagation()
+                let template = ''
+                if (this.$scopedSlots.input) {
+                    template = !this.useTooltip ? this.$scopedSlots.input() : h('div', {
+                        class: 'sapi-edit-column_input-Wrap',
+                        on: {
+                            'mouseenter': ev => {
+                                this.hidePopper()
+                                ev.stopPropagation()
+                            },
+                            'mouseover': ev => {
+                                this.hidePopper()
+                                ev.stopPropagation()
+                            },
+                            'mouseleave': ev => {
+                                ev.stopPropagation()
+                            }
                         }
-                    }
-                }, this.$scopedSlots.input())
-            },
-            // 文本模板
-            getTemplate (h) {
-                return h('div', {
-                    class: 'sapi-input-column_text-Wrap',
-                }, this.$scopedSlots.default())
+                    }, this.$scopedSlots.input())
+                }
+                return template
             },
             // el-tooltip类控制
             toggleTooltip (parentNode, add = true) {
@@ -61,36 +80,25 @@
             }
         },
         render (h) {
-            const template = this.editable ? this.getEditTemplate(h) : this.getTemplate(h)
-            this.$nextTick(function () {
-                const parentNode = this.$el.parentNode
-                this.toggleTooltip(parentNode, !this.editable)
-                this.$once('hook:beforeDestroy', () => this.toggleTooltip(parentNode, true))
-            })
+            let template = this.$scopedSlots.default && this.$scopedSlots.default()
+            if (this.editable) template = this.getEditTemplate(h)
+
+            if (this.useTooltip) {
+                this.$nextTick(function () {
+                    const parentNode = this.$el.parentNode
+                    this.toggleTooltip(parentNode, !this.editable)
+                    this.$once('hook:beforeDestroy', () => this.toggleTooltip(parentNode, true))
+                })
+            }
             
             return template
         }
     }
 </script>
 <style lang="less">
-    .sapi-input-column_input-Wrap{
+    .sapi-edit-column_input-Wrap{
         width: 100%;
         overflow: hidden;
-    }
-    .sapi-input-column_text-Wrap{
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        word-break: keep-all;
-        white-space: nowrap;
-        font-size: inherit;
-        font-weight: inherit;
-        color: inherit;
-        line-height: inherit;
-        background: transparent;
-        text-align: inherit;
-        vertical-align: inherit;
     }
 </style>
 

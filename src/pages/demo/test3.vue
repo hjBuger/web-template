@@ -1,17 +1,17 @@
 <template>
     <div class="test3-wrap">
         <el-button @click="editRowId = ''">clear</el-button>
-        <el-table border :data="tableData" @row-dblclick="setEditRow" ref="table">
+        <el-table border :data="tableData" @row-dblclick="setEditRow" ref="table" row-key="id">
             <el-table-column show-overflow-tooltip width="100" prop="label" label="名称"></el-table-column>
-            <sapi-edit-column show-overflow-tooltip :edit-row="editRowId" prop="test" label="测试1">
+            <sapi-edit-column :edit-row="editRowId" prop="test" label="测试1">
                 <template v-slot:header>
-                    233
+                    测试header插槽
                 </template>
                 <template v-slot:input="props">
                     <el-input v-model="props.row.test"></el-input>
                 </template>
                 <template v-slot="props">
-                    {{props.row.test || ''}}
+                    {{props.row.test}}
                 </template>
             </sapi-edit-column>
             <sapi-edit-column show-overflow-tooltip :edit-row="editRowId" prop="test2" label="测试2">
@@ -25,6 +25,11 @@
 <script>
     export default {
         menuLabel: '测试3',
+        provide () {
+            return {
+                ElTable: {}
+            }
+        },
         data() {
             return {
                 tableData: [
@@ -38,11 +43,6 @@
             setEditRow (row) {
                 this.editRowId = row.id
             }
-        },
-        mounted () {
-            this.$nextTick(function () {
-                console.log('table: ', this.$refs.table)
-            })
         },
         beforeDestroy () {}
     }

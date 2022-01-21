@@ -3,7 +3,7 @@ export default (Vue, ElementUI) => {
     ElementUI.Table.mixins = mixins.concat([{
         provide () {
             return {
-                elTable: this
+                EL_TABLE: this
             }
         }
     }])
