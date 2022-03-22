@@ -14,11 +14,6 @@
                     return {}
                 }
             },
-            // 当前编辑行
-            editRow: {
-                type: String,
-                default: ''
-            },
             // 列使用show-overflow-tooltip
             useTooltip: {
                 type: Boolean,
@@ -26,11 +21,16 @@
             }
         },
         computed: {
+            // 可编辑
             editable () {
                 return this.rowProps.row[this.rowKey] === this.editRow
             },
             rowKey () {
                 return this.EL_TABLE && this.EL_TABLE.rowKey || 'id'
+            },
+            // 编辑行
+            editRow () {
+                return this.EL_TABLE && this.EL_TABLE.editRow || ''
             }
         },
         methods: {
@@ -39,7 +39,7 @@
                 let template = ''
                 if (this.$scopedSlots.input) {
                     template = !this.useTooltip ? this.$scopedSlots.input() : h('div', {
-                        class: 'sapi-edit-column_input-Wrap',
+                        class: 'sapi-edit-column_input-wrap',
                         on: {
                             'mouseenter': ev => {
                                 this.hidePopper()
@@ -80,7 +80,9 @@
             }
         },
         render (h) {
-            let template = this.$scopedSlots.default && this.$scopedSlots.default()
+            let template = this.$scopedSlots.default && this.$scopedSlots.default() || ''
+            if (template && template.length > 1) template = h('div', { class: 'sapi-edit-column_default-wrap' }, template)
+
             if (this.editable) template = this.getEditTemplate(h)
 
             if (this.useTooltip) {
@@ -96,9 +98,21 @@
     }
 </script>
 <style lang="less">
-    .sapi-edit-column_input-Wrap{
+    .sapi-edit-column_input-wrap{
         width: 100%;
         overflow: hidden;
     }
+    .sapi-edit-column_default-wrap{
+        width: 100%;
+        display: inherit;
+        font-size: inherit;
+        font-weight: inherit;
+        color: inherit;
+        line-height: inherit;
+        text-align: inherit;
+        overflow: inherit;
+        text-overflow: inherit;
+        word-break: inherit;
+        white-space: inherit;
+    }
 </style>
-

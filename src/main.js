@@ -7,9 +7,12 @@ import './components/global'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import Patch from '@/static/js/patch/index.js'
+import StaticInstall from '@/static/js/install/index.js'
+import '@/static/css/base-extend.less'
 Patch(Vue, ElementUI)
 Vue.use(ElementUI)
 Vue.use(install)
+Vue.use(StaticInstall)
 
 Vue.config.productionTip = false
 

@@ -1,24 +1,42 @@
 class Utils {
-    getDataByKeyValue (keyValue, list, { keyField = 'id', childrenField = 'children' } = {}) {
-        if (!list || !list.length) return
-        let current = undefined
+    getDataByKeyValue (keyValue, list, { key = 'id', children = 'children', all = false } = {}) {
+        if (!list || !list.length) return null
+        let current = null
+        if (all) current = []
         for (let item of list) {
-            if (item[keyField] === keyValue) {
-                current = item
-                break
+            if (Object.is(item[key], keyValue)) {
+                if (all) {
+                    current.push(item)
+                } else {
+                    current = item
+                    break
+                }
             }
-            if (item[childrenField] && item[childrenField].length) {
-                current = this.getDataByKeyValue(keyValue, item[childrenField], { keyField, childrenField })
-                if (current) break
+            if (item[children] && item[children].length) {
+                const childCurrent = this.getDataByKeyValue(keyValue, item[children], { key, children, all })
+                if (childCurrent) {
+                    if (all) {
+                        current.push(...childCurrent)
+                    } else {
+                        current = childCurrent
+                        break
+                    }
+                }
             }
         }
-        return current
+        return all ? current.length ? current : null : current
     }
 
     isEmpty (val, includeEmptyString = true) {
         const emptyList = [null, undefined, NaN]
         if (includeEmptyString) emptyList.push('')
         return emptyList.some(item => Object.is(item, val))
+    }
+    isObject (val) {
+        return this.oType(val) === 'Object'
+    }
+    oType (val) {
+        return Object.prototype.toString.call(val).replace(/^\[object\s+(\w+)\]$/, '$1')
     }
 }
 

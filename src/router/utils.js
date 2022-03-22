@@ -29,7 +29,9 @@ export function createRouter (config, requireComponent, requireComponentChild) {
         path: config.path ? config.path : `/${config.name}`,
         component: null,
 		children: [],
-        meta: {}
+        meta: {
+            ...(config.meta || {})
+        }
     }
 
     for (let file of files) {

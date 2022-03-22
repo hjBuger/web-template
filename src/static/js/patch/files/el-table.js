@@ -5,6 +5,13 @@ export default (Vue, ElementUI) => {
             return {
                 EL_TABLE: this
             }
+        },
+        props: {
+            // 编辑行
+            editRow: {
+                type: String,
+                default: ''
+            }
         }
     }])
 }

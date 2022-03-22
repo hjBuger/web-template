@@ -1,14 +1,6 @@
-
 const InputColumn = () => import('./input-column')
 export default {
     functional: true,
-    props: {
-        // 编辑的行的id值
-        editRow: {
-            type: [Number, String],
-            default: ''
-        }
-    },
     render (h, context) {
         // 获取样式
         const getStyle = () => {
@@ -43,28 +35,22 @@ export default {
 
         // column属性
         const attrs = context.data.attrs || {}
-        // 组件参数
-        const wrapProps = context.props
         // 判断使用tooltip
         const useTooltip = attrs.hasOwnProperty('show-overflow-tooltip') ? attrs['show-overflow-tooltip'] !== false : false
 
-        return h('el-table-column', {
+        // 数据模型
+        const dataModel = {
             class: getClass(),
             style: getStyle(),
-            props: {
-                ...attrs,
-                // 因为functional非响应，改变editRow不触发scopedSlots重新渲染
-                // 所以通过更改属性来触发响应，label实际实现是在scopedSlots.header
-                label: wrapProps.editRow
-            },
+            props: attrs,
             // 作用域插槽
             scopedSlots: {
                 default: props => {
                     const defaultSlot = context.scopedSlots.default ? context.scopedSlots.default(props) : attrs.prop ? props.row[attrs.prop] : ''
                     const inputSlot = context.scopedSlots.input ? context.scopedSlots.input(props) : defaultSlot
+
                     return h(InputColumn, {
                         props: {
-                            editRow: wrapProps.editRow,
                             rowProps: props,
                             useTooltip
                         },
@@ -77,7 +63,10 @@ export default {
                 header: props => {
                     return context.scopedSlots.header ? context.scopedSlots.header(props) : isEmpty(attrs.label) ? '' : attrs.label
                 }
-            }
-        })
+            },
+            key: context.data.key || null
+        }
+
+        return h('el-table-column', dataModel)
     }
 }
