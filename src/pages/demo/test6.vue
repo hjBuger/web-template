@@ -1,6 +1,11 @@
 <template>
     <div class="test6-wrap">
         <el-button @click="tableToExcel">下载</el-button>
+        <sapi-sort-list v-model="tableData" lock-axis="x" axis="x">
+            <sapi-sort-row v-for="(item, index) in tableData" :item="item" :index="index" :key="index">
+                {{item.label}}
+            </sapi-sort-row>
+        </sapi-sort-list>
     </div>
 </template>
 <script>
@@ -10,8 +15,28 @@
         menuLabel: '测试6',
         data() {
             return {
-                tableData: [],
-                
+                tableData: [
+                    {
+                        label: '11',
+                        value: '11'
+                    },
+                    {
+                        label: '22',
+                        value: '22'
+                    },
+                    {
+                        label: '33',
+                        value: '33'
+                    },
+                    {
+                        label: '44',
+                        value: '44'
+                    },
+                    {
+                        label: '55',
+                        value: '55'
+                    }
+                ],
             }
         },
         watch: {

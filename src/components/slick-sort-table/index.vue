@@ -1,29 +1,25 @@
 <script>
     import { ContainerMixin } from 'vue-slicksort'
-    import ListWrap from './list/list-wrap'
-    import TableWrap from './table/table-wrap'
-    import './sapi-sort-list.less'
+    import TableWrap from './table-wrap'
+    import SlickSortColumn from './slick-sort-column'
+    import './slick-sort-table.less'
 
     export default {
-        components: {
-            ListWrap,
-            TableWrap
-        },
         mixins: [ContainerMixin],
         provide () {
             return {
-                sapiSortList: this
+                slickSortTable: this
             }
         },
         props: {
             axis: {
                 type: String,
-                default: 'y'
+                default: 'x'
             },
             // vue-slicksort属性：y轴方向拖拽
             lockAxis: {
                 type: String,
-                default: 'y'
+                default: 'x'
             },
             // vue-slicksort属性：隐藏拖拽镜像
             hideSortableGhost: {
@@ -38,28 +34,13 @@
             // vue-slicksort属性：拖拽行class控制
             helperClass: {
                 type: String,
-                default: 'sapi-sort-list_sortable-row'
-            },
-            // list：列表形式、table-表格形式
-            type: {
-                type: String,
-                default: 'list'
-            },
-            // 显示边框
-            border: {
-                type: Boolean,
-                default: true
-            },
-            // useDragHandle为true时，显示的拖拽图标
-            dragIcon: {
-                type: String,
-                default: 'icon-menu'
+                default: 'slick-sort-table_sortable-column'
             }
         },
         computed: {
             wrapAttrs () {
                 let attrs = {};
-                let ignoreKeys = ['lockAxis','hideSortableGhost', 'useDragHandle', 'helperClass','type', 'dragIcon']
+                let ignoreKeys = ['axis', 'lockAxis','hideSortableGhost', 'useDragHandle', 'helperClass']
                 let keys = Object.keys(this.$attrs).filter(key => !ignoreKeys.find(ignoreKey => ignoreKey === key))
                 for(let key of keys) {
                     if(this.$attrs.hasOwnProperty(key)) {
@@ -72,8 +53,18 @@
                 return Object.assign({}, this.$listeners)
             }
         },
+        methods: {
+            renderColumn (h) {
+                return (this.value || []).map((item, index) => {
+                    return h(SlickSortColumn, {
+                        props: { item, index }
+                    })
+                })
+            }
+        },
         render (h) {
-            return h(`${this.type}-wrap`, { props: this.wrapAttrs, on: this.wrapListeners }, this.$scopedSlots.default && this.$scopedSlots.default({}))
+            const columns = this.renderColumn(h)
+            return h(TableWrap, { props: this.wrapAttrs, on: this.wrapListeners }, columns)
         }
     }
 </script>

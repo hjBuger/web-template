@@ -1,0 +1,65 @@
+@borderColor: #ebeef5;
+.slick-sort-table{
+    max-width: 100%;
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    padding-bottom: 12px;
+    .slick-sort-table_empty-holder{
+        width: 100%;
+        height: 40px;
+        position: relative;
+        &:after{
+            content: "暂无数据";
+            display: block;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 14px;
+            color: #afaeae;
+            user-select: none;
+        }
+    }
+}
+.slick-sort-column{
+    display: flex;
+    width: auto;
+    height: auto;
+    flex-direction: column;
+    align-items: stretch;
+    border: 1px solid @borderColor;
+    font-size: 13px;
+    color: #475669;
+    background: #ffffff;
+
+    & + .slick-sort-column{
+        border-left-color: transparent;
+    }
+
+    .slick-sort-column-content{
+        flex: auto;
+        display: flex;
+        justify-content: flex-start;
+    }
+    .slick-sort-column-label,
+    .slick-sort-column-value{
+        height: 40px;
+        min-width: 40px;
+        padding: 0 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .slick-sort-column-label{
+        border-bottom: 1px solid @borderColor;
+    }
+
+    &.slick-sort-table_sortable-column{
+        color: #458aff;
+        border-color: #458aff;
+        z-index: 210;
+    }
+}

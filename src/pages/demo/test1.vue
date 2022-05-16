@@ -1,97 +1,129 @@
 <template>
     <div>
-        <el-button type="primary" @click="test">test</el-button>
-        <el-button type="primary" @click="test2">test2</el-button>
-
-        <div class="test-wrap"></div>
+        <div class="test-block">
+            <sapi-status-mark
+                :data="markData"
+                title="计划节点"
+                line-type="dashed"
+                content-show-type="normal"
+                type="horizontal"
+                :show-status-bar="true"
+                :status-bar-reverse="true"
+                :gap="150"
+                line-color-inherit
+                :status-map="options"
+            >
+                <template #statusBarPrefix>
+                    <el-button>点击</el-button>
+                </template>
+                <template #statusBarSuffix>
+                    <el-button>点击</el-button>
+                </template>
+                <template v-slot="props">
+                    <div style="color:red;">{{props.item.label}}</div>
+                    <div style="color:red;">{{props.data.name}}</div>
+                    <div style="color:red;">{{props.$index}}</div>
+                    测试新的组件标题测试新的组件标题测试新的组件标题测试新的组件标题
+                </template>
+            </sapi-status-mark>
+        </div>
     </div>
 </template>
 <script>
-    import VC from '@/static/js/vmConstructor'
     export default {
         menuLabel: '测试1',
-        methods: {
-            test () {
-                // set测试
-                this.VC.test.$set({
-                    class: 'test-class',
-                    props: {
-                        content: '哈哈哈哈哈哈'
-                    },
-                    on: {
-                        'ev-test':  val => {
-                            console.log('接收到消息: ', val)
-                        }
-                    },
-                    scopedSlots: h => {
-                        return {
-                            default: props => h('span', 'tttttt')
-                        }
-                    }
-                })
-
-                // class测试
-                this.VC.test.$class('class1', true)
-                this.VC.test.$class('class2 class3  class4')
-                this.VC.test.$class({
-                    class5: true
-                })
-                this.VC.test.$class([
-                    'class6',
-                    'class7 class8',
+        data () {
+            return {
+                markData: [
                     {
-                        class9: true
-                    }
-                ])
-
-                // props测试
-                this.VC.test.$props('content', '123')
-                this.VC.test.$props({
-                    'content': 'test11111111'
-                })
-
-                // on测试
-                this.VC.test.$on('ev-test', payload => {
-                    console.log('payload: ', payload)
-                })
-                this.VC.test.$on({
-                    'ev-test': payload => {
-                        console.log('payload: ', 'cs')
+                        label: '拿地',
+                        // labelStyle: {
+                        //     fontWeight: 'bold',
+                        //     fontSize: '16px'
+                        // },
+                        value: '11',
+                        status: '1',
+                        content: `2022-05-10`,
+                        clickable: true,
+                        data: {
+                            name: 'hhhhhhhhhhhhhh'
+                        },
+                        action: (item) => {
+                            console.log('item: ', item)
+                        }
                     },
-                    input: val => {
-                        this.visible = val
+                    {
+                        label: '项目立项会',
+                        value: '22',
+                        status: '2',
+                        content: '22222'
+                    },
+                    {
+                        label: '项目预备会',
+                        value: '33',
+                        status: '3',
+                        content: '33333'
+                    },
+                    {
+                        label: '项目启动会',
+                        value: '44',
+                        status: '2',
+                        content: '44444'
+                    },
+                    {
+                        label: '总包开工',
+                        value: '55',
+                        status: '5',
+                        content: '55555'
+                    },
+                    {
+                        label: '总包开工2',
+                        value: '66',
+                        status: '4',
+                        content: '66666'
+                    },
+                ],
+                options: [
+                    {
+                        label: '未开始',
+                        value: '1',
+                        color: 'gray',
+                        icon: 'el-icon-monitor',
+                        iconStyle: {
+                            borderRadius: '4px'
+                        },
+                        dotSize: 24
+                    },
+                    {
+                        label: '进行中',
+                        value: ['2', '5'],
+                        color: 'red',
+                        icon: {
+                            type: 'text',
+                            content: '进'
+                        }
+                    },
+                    {
+                        label: '已完成',
+                        value: '3,4',
+                        color: 'green',
+                        icon: {
+                            type: 'img',
+                            content: 'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fdingyue.ws.126.net%2F2020%2F0515%2F465567a6j00qadpfz001cc000hs00b4c.jpg&refer=http%3A%2F%2Fdingyue.ws.126.net&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1654769533&t=64e379f7a431131b5bcd1e1571d19213'
+                        },
+                        visible: false
                     }
-                })
-
-                // scopedSlots测试
-                this.VC.test.$scopedSlots(h => ({
-                    default: props => h('span', 'scopedSlots测试')
-                }))
-            },
-            test2 () {
-                const test2 = this.VC.create({
-                    id: 'test2',
-                    component: () => import('@/components/test.vue'),
-                    props: {
-                        content: 'test2测试'
-                    }
-                })
-                test2.$props('value', this.visible).$on('input', val => {
-                    this.visible = val
-                })
+                ]
             }
-        },
-        mounted () {
-            this.VC = new VC()
-            this.VC.create({
-                id: 'test',
-                component: () => import('@/components/test.vue'),
-                wrap: '.test-wrap'
-            })
-        },
-        beforeDestroy () {
-            // this.VC.clear()
-            // this.VC = null
         }
     }
 </script>
+<style lang="less">
+    .test-block{
+        width: 700px;
+        padding: 10px;
+        border-radius: 8px;
+        box-shadow: 0 1px 9px #3f3e3e;
+        margin: 20px auto 0;
+    }
+</style>

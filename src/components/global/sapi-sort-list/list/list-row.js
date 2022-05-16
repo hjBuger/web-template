@@ -29,10 +29,14 @@ export default {
         handle: HandleDirective
     },
     computed: {
+        xDirective () {
+            return this.sapiSortList.lockAxis.toLowerCase() !== 'y'
+        },
         className () {
             return {
                 'sapi-sort-row': true,
-                'sapi-sort-row-border': this.sapiSortList.border
+                'sapi-sort-row-border': this.sapiSortList.border,
+                'sapi-sort-row_x': this.xDirective
             }
         },
         rowStyle () {
@@ -53,7 +57,7 @@ export default {
                 <div class="sapi-sort-row-content">
                     {this.$slots.default}
                 </div>
-                {this.sapiSortList.useDragHandle ? <Handler/> : ''}
+                {this.sapiSortList.useDragHandle && !this.xDirective ? <Handler/> : ''}
             </li>
         )
     }

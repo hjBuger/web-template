@@ -32,7 +32,7 @@
     }
 
     .sapi-sort-row-content{
-        flex: 1;
+        flex: auto;
         display: flex;
         justify-content: flex-start;
     }
@@ -46,5 +46,13 @@
         color: #458aff;
         border-color: #458aff;
         z-index: 210;
+    }
+    &.sapi-sort-row_x{
+        display: inline-flex;
+        width: auto;
+        height: auto;
+        & + .sapi-sort-row_x{
+            margin-left: 10px;
+        }
     }
 }

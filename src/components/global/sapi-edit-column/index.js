@@ -37,28 +37,35 @@ export default {
         const attrs = context.data.attrs || {}
         // 判断使用tooltip
         const useTooltip = attrs.hasOwnProperty('show-overflow-tooltip') ? attrs['show-overflow-tooltip'] !== false : false
-
+        const className = attrs['class-name'] || attrs.className || ''
+        const inputSlot = context.scopedSlots.input
+        const defaultClass = `sapi-edit-column ${inputSlot ? 'has-input-slot' : ''}`
         // 数据模型
         const dataModel = {
             class: getClass(),
             style: getStyle(),
-            props: attrs,
+            props: {
+                ...attrs,
+                className: className ? `${defaultClass} ${className}` : defaultClass
+            },
             // 作用域插槽
             scopedSlots: {
                 default: props => {
-                    const defaultSlot = context.scopedSlots.default ? context.scopedSlots.default(props) : attrs.prop ? props.row[attrs.prop] : ''
-                    const inputSlot = context.scopedSlots.input ? context.scopedSlots.input(props) : defaultSlot
-
-                    return h(InputColumn, {
+                    const defaultSlotTemplate = context.scopedSlots.default ? context.scopedSlots.default(props) : attrs.prop ? props.row[attrs.prop] : ''
+                    const inputSlotTemplate = inputSlot ? inputSlot(props) : null
+                    const scopedSlots = {
+                        default: () => defaultSlotTemplate
+                    }
+                    if (inputSlotTemplate) {
+                        scopedSlots.input = () => inputSlotTemplate
+                    }
+                    return inputSlotTemplate ? h(InputColumn, {
                         props: {
                             rowProps: props,
                             useTooltip
                         },
-                        scopedSlots: {
-                            default: () => defaultSlot,
-                            input: () => inputSlot
-                        }
-                    })
+                        scopedSlots
+                    }) : defaultSlotTemplate
                 },
                 header: props => {
                     return context.scopedSlots.header ? context.scopedSlots.header(props) : isEmpty(attrs.label) ? '' : attrs.label

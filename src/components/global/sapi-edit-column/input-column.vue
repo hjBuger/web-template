@@ -23,7 +23,7 @@
         computed: {
             // 可编辑
             editable () {
-                return this.rowProps.row[this.rowKey] === this.editRow
+                return this.rowProps.row[this.rowKey] === this.editRow && !!this.$scopedSlots.input
             },
             rowKey () {
                 return this.EL_TABLE && this.EL_TABLE.rowKey || 'id'
@@ -80,8 +80,8 @@
             }
         },
         render (h) {
-            let template = this.$scopedSlots.default && this.$scopedSlots.default() || ''
-            if (template && template.length > 1) template = h('div', { class: 'sapi-edit-column_default-wrap' }, template)
+            let defaultTemplate = this.$scopedSlots.default && this.$scopedSlots.default() || ''
+            let template = defaultTemplate ? h('div', { class: `sapi-edit-column_default-wrap` }, defaultTemplate) : ''
 
             if (this.editable) template = this.getEditTemplate(h)
 
@@ -98,21 +98,30 @@
     }
 </script>
 <style lang="less">
-    .sapi-edit-column_input-wrap{
-        width: 100%;
-        overflow: hidden;
-    }
-    .sapi-edit-column_default-wrap{
-        width: 100%;
-        display: inherit;
-        font-size: inherit;
-        font-weight: inherit;
-        color: inherit;
-        line-height: inherit;
-        text-align: inherit;
-        overflow: inherit;
-        text-overflow: inherit;
-        word-break: inherit;
-        white-space: inherit;
+    .el-table {
+        td.sapi-edit-column.has-input-slot{
+            .sapi-edit-column_input-wrap{
+                flex: auto;
+                overflow: hidden;
+            }
+            .sapi-edit-column_default-wrap{
+                flex: auto;
+                display: block;
+                font-size: inherit;
+                font-weight: inherit;
+                color: inherit;
+                line-height: inherit;
+                text-align: inherit;
+                overflow: inherit;
+                text-overflow: inherit;
+                word-break: inherit;
+                white-space: inherit;
+            }
+            .cell{
+                display: flex;
+                align-items: center;
+                overflow: hidden;
+            }
+        }
     }
 </style>

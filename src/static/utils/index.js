@@ -1,3 +1,4 @@
+import { safeHtml } from './install/sanitize-html.js'
 class Utils {
     getDataByKeyValue (keyValue, list, { key = 'id', children = 'children', all = false } = {}) {
         if (!list || !list.length) return null
@@ -35,8 +36,30 @@ class Utils {
     isObject (val) {
         return this.oType(val) === 'Object'
     }
+    isArray (val) {
+        return this.oType(val) === 'Array'
+    }
+    isBoolean (val) {
+        return this.oType(val) === 'Boolean'
+    }
+    isString (val) {
+        return this.oType(val) === 'String'
+    }
+    isPromise (val) {
+        return this.oType(val) === 'Promise'
+    }
+    isNumber (val) {
+        return this.oType(val) === 'Number'
+    }
+    isFunction (val) {
+        return this.oType(val) === 'Function'
+    }
     oType (val) {
         return Object.prototype.toString.call(val).replace(/^\[object\s+(\w+)\]$/, '$1')
+    }
+
+    safeHtml (val) {
+        return safeHtml(val)
     }
 }
 
