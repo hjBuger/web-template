@@ -16,6 +16,8 @@
                 default: 'vertical'
             },
             /**
+             * 数据源data，以下是item的构造属性
+             * 
              * data {object} 原始数据对象
              * label {string} 标题
              * value {string|number} 标记值, 如id
@@ -37,9 +39,10 @@
              * iconStyle {object} 图标容器样式控制 { borderRadius: '4px' }
              * lineColor {string} 线条颜色
              * lineType {string} 线条类型：solid-实线、dotted-点线、dashed-虚线
-             * action {function} 独立的点击方法
-             * clickable {boolean} 是否可点击
+             * lineVisible {boolean} 线条显示
              * dotSize {number} mark点尺寸
+             * clickable {boolean} 是否可点击
+             * clickFn {function} 独立的点击方法
              * 
             */
             data: {
@@ -48,35 +51,10 @@
                     return []
                 }
             },
-            // mark点尺寸
-            dotSize: {
-                type: Number,
-                default: 16
-            },
             // 标题
             title: {
                 type: String,
                 default: ''
-            },
-            // 线条宽度
-            lineWidth: {
-                type: Number,
-                default: 2
-            },
-            // solid-实线、dotted-点线、dashed-虚线
-            lineType: {
-                type: String,
-                default: 'solid'
-            },
-            // 线条颜色
-            lineColor: {
-                type: String,
-                default: '#909399'
-            },
-            // 线条颜色继承状态颜色
-            lineColorInherit: {
-                type: Boolean,
-                default: false
             },
             // 内容区显示类型：正常显示-normal、tip显示-tip
             contentShowType: {
@@ -86,16 +64,6 @@
             // type为vertical时有效，用来限制高度，生成滚动
             height: {
                 type: [String, Number],
-                default: ''
-            },
-            // clickable 可点击
-            clickable: {
-                type: Boolean,
-                default: true
-            },
-            // 可点击项标题的控制类名
-            clickableClass: {
-                type: String,
                 default: ''
             },
             // 显示状态栏
@@ -113,12 +81,67 @@
                 type: Number,
                 default: 100
             },
+            // 标题样式控制
+            labelStyle: {
+                type: Object,
+                default: null
+            },
+            // 全局图标
+            icon: {
+                type: [String, Object],
+                default: ''
+            },
+            // 图标容器样式控制
+            iconStyle: {
+                type: Object,
+                default: null
+            },
+            // 线条颜色
+            lineColor: {
+                type: String,
+                default: '#909399'
+            },
+            // 线条颜色继承状态颜色
+            lineColorInherit: {
+                type: Boolean,
+                default: false
+            },
+            // solid-实线、dotted-点线、dashed-虚线
+            lineType: {
+                type: String,
+                default: 'solid'
+            },
+            // 线条宽度
+            lineWidth: {
+                type: Number,
+                default: 2
+            },
+            // 线条显示
+            lineVisible: {
+                type: Boolean,
+                default: true
+            },
+            // mark点尺寸
+            dotSize: {
+                type: Number,
+                default: 16
+            },
+            // clickable 可点击
+            clickable: {
+                type: Boolean,
+                default: true
+            },
+            // 可点击项标题的控制类名
+            clickableClass: {
+                type: String,
+                default: ''
+            },
             /** 
-             * 状态数据
+             * 状态匹配数据
              * {
-             *      label: '未开始',
-             *      value: '1', // 支持多状态值: 1或1,2,3或[1,2,3]
-             *      color: 'red'
+             *      statusName: '未开始',
+             *      status: '1', // 支持多状态值: 1或1,2,3或[1,2,3]
+             *      statusColor: 'red'
              * 
              *      labelStyle {object} 标题样式控制 { color: red }
              *      icon {string|object} 图标，传字符串默认为类名控制的图标
@@ -131,9 +154,13 @@
 	         *              content: 'el-icon-monitor'
              *          }
              *      iconStyle {object} 图标容器样式控制 { borderRadius: '4px' }
+             *      lineColor {string} 线条颜色
+             *      lineType {string} 线条类型：solid-实线、dotted-点线、dashed-虚线
              *      dotSize mark点尺寸,
+             *      clickable false
+             *      clickFn {function} 独立的点击方法
              *      visible 是否在状态栏显示，不配置默认显示，配置为false则不显示
-             *      clickable: false
+             *      lineVisible {boolean} 线条显示
              * }
              */
             statusMap: {
@@ -276,8 +303,9 @@
             },
             // 获取文件服务地址
             getImgUrl (file) {
-                const path = file.thumbPath || file.filePath
-                return path.toLocaleLowerCase().indexOf(this.$webConfig.fileServer.toLocaleLowerCase()) !== -1 ? path : (this.$webConfig.fileServer + '/' + path)
+                const path = file.thumbPath || file.filePath || file.relativePath
+                const hasHttp = new RegExp(`^(http://|https://|${this.$webConfig.filePreviewPath}/)`).test(path)
+                return hasHttp ? path : this.$webConfig.filePreviewPath.replace(/(\/)+$/, '') + '/' + path.replace(/^(\/)+/, '')
             },
             // 生成icon
             createIcon (h, icon, style, createContent) {
@@ -311,6 +339,7 @@
             // 获取状态栏icon样式
             getIconStyle (status) {
                 const style = {
+                    ...(this.iconStyle || {}),
                     ...(status.iconStyle || {}),
                     width: (status.dotSize || this.dotSize) + 'px',
                     height:(status.dotSize || this.dotSize) + 'px',
@@ -322,10 +351,12 @@
         render (h) {
             const header = this.createHeader(h)
             const content = this.createContent(h)
-            return h('div', {
-                style: this.contentStyle,
-                class: `sapi-status-mark sapi-status-mark_${this.type}`
-            }, [...header, ...content])
+            return (
+                <div class={`sapi-status-mark sapi-status-mark_${this.type}`} style={this.contentStyle}>
+                    {header}
+                    {content}
+                </div>
+            )
         }
     }
 </script>
@@ -402,7 +433,7 @@
             position: relative;
             padding-bottom: 20px;
             padding-right: 10px;
-            overflow: hidden;
+            // overflow: hidden;
             &:last-of-type{
                 .sapi-status-mark_item-line{
                     display: none;

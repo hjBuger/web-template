@@ -12,6 +12,7 @@
                 :gap="150"
                 line-color-inherit
                 :status-map="options"
+                :line-visible="true"
             >
                 <template #statusBarPrefix>
                     <el-button>点击</el-button>
@@ -48,7 +49,7 @@
                         data: {
                             name: 'hhhhhhhhhhhhhh'
                         },
-                        action: (item) => {
+                        clickFn: (item) => {
                             console.log('item: ', item)
                         }
                     },
@@ -92,7 +93,8 @@
                         iconStyle: {
                             borderRadius: '4px'
                         },
-                        dotSize: 24
+                        dotSize: 24,
+                        lineType: 'solid'
                     },
                     {
                         label: '进行中',
@@ -111,7 +113,7 @@
                             type: 'img',
                             content: 'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fdingyue.ws.126.net%2F2020%2F0515%2F465567a6j00qadpfz001cc000hs00b4c.jpg&refer=http%3A%2F%2Fdingyue.ws.126.net&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1654769533&t=64e379f7a431131b5bcd1e1571d19213'
                         },
-                        visible: false
+                        lineType: 'solid'
                     }
                 ]
             }

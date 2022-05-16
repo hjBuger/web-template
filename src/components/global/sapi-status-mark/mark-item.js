@@ -12,6 +12,10 @@ export default {
         }
     },
     computed: {
+        // 匹配的状态
+        status () {
+            return this.sapiSimpleMark.getStatus(this.item.status)
+        },
         // 是否水平
         horizontal () {
             return this.sapiSimpleMark.type === 'horizontal'
@@ -36,7 +40,11 @@ export default {
         },
         // label样式控制
         labelStyle () {
-            const outSideStyle = this.item.labelStyle || {}
+            const outSideStyle = {
+                ...(this.sapiSimpleMark.labelStyle || {}),
+                ...(this.status.labelStyle || {}),
+                ...(this.item.labelStyle || {})
+            }
             const style = {
                 lineHeight: this.dotSize + 'px',
             }
@@ -56,20 +64,20 @@ export default {
         deviation () {
             return (this.maxDotSize - this.dotSize) / 2
         },
-        // 定制的icon样式
-        iconStyle () {
-            return this.item.iconStyle || this.status.iconStyle || {}
-        },
         //  mark背景色
         statusColor () {
             return this.item.statusColor || this.iconStyle.background || this.status.color
         },
-        // 匹配的状态
-        status () {
-            return this.sapiSimpleMark.getStatus(this.item.status)
+        // icon样式配置
+        iconStyle () {
+            return {
+                ...(this.sapiSimpleMark.iconStyle || {}),
+                ...(this.status.iconStyle || {}),
+                ...(this.item.iconStyle || {})
+            }
         },
-        // mark样式控制
-        markStyle () {
+        // icon样式控制
+        itemIconStyle () {
             const style = {
                 ...(this.iconStyle || {}),
                 left: this.deviation + 'px',
@@ -82,10 +90,18 @@ export default {
             }
             return style
         },
+        // 线条颜色
+        lineColor () {
+            return this.item.lineColor || this.status.lineColor || (this.sapiSimpleMark.lineColorInherit ? this.statusColor : this.sapiSimpleMark.lineColor)
+        },
+        // 线条显示
+        lineVisible () {
+            return this.item.hasOwnProperty('lineVisible') ? this.item.lineVisible : this.status.hasOwnProperty('lineVisible') ?  this.status.lineVisible : this.sapiSimpleMark.lineVisible
+        },
         // 线条样式控制
         lineStyle () {
-            const lineColor = this.item.lineColor ? this.item.lineColor : this.sapiSimpleMark.lineColorInherit ? this.statusColor : this.sapiSimpleMark.lineColor
-            const lineType = this.item.lineType || this.sapiSimpleMark.lineType
+            const lineColor = this.lineColor
+            const lineType = this.item.lineType || this.status.lineType || this.sapiSimpleMark.lineType
             const direction = this.horizontal ? 'right' : 'bottom'
             const style = {
                 left: Math.round(this.dotSize / 2 + this.deviation) + 'px',
@@ -94,7 +110,7 @@ export default {
             }
 
             if (this.horizontal) {
-                style.left = this.maxDotSize + 'px'
+                style.left = Math.round(this.maxDotSize / 2) + 'px'
                 style.top = Math.round(this.dotSize / 2 + this.deviation) + 'px'
             }
 
@@ -117,16 +133,25 @@ export default {
             if (this.$utils.isEmpty(this.item.content)) return ''
             return this.$utils.safeHtml(this.item.content)
         },
+        // 是否可点击
         clickable () {
             return this.item.hasOwnProperty('clickable') ? this.item.clickable : this.status.hasOwnProperty('clickable') ?  this.status.clickable : this.sapiSimpleMark.clickable
+        },
+        // 点击方法
+        clickFn () {
+            return this.item.hasOwnProperty('clickFn') ? this.item.clickFn : this.status.hasOwnProperty('clickFn') ?  this.status.clickFn : null
+        },
+        // 图标
+        icon () {
+            return this.item.icon || this.status.icon || this.sapiSimpleMark.icon || ''
         }
     },
     methods: {
         // 点击事件
         itemClick () {
             if (!this.clickable) return
-            if (this.item.action && this.$utils.isFunction(this.item.action)) {
-                return this.item.action(this.item)
+            if (this.clickFn && this.$utils.isFunction(this.clickFn)) {
+                return this.clickFn(this.item)
             }
             this.sapiSimpleMark.$emit('item-click', this.item)
         },
@@ -158,6 +183,10 @@ export default {
                     }
                 </div>
             )
+        },
+        createLine (h) {
+            if (!this.lineVisible) return ''
+            return <div class="sapi-status-mark_item-line" style={this.lineStyle}></div>
         }
     },
     created () {
@@ -165,13 +194,15 @@ export default {
     },
     render (h) {
         // icon渲染
-        const IconHolder = this.sapiSimpleMark.createIcon(h, this.item.icon || this.status.icon, this.markStyle, this.contentShowType === 'tip' ? this.createContent : null)
+        const IconHolder = this.sapiSimpleMark.createIcon(h, this.icon, this.itemIconStyle, this.contentShowType === 'tip' ? this.createContent : null)
         // label渲染
         const ItemLabel = this.createLabel(h)
         // 内容渲染
         const ItemContent = this.createContent(h)
         // 其他渲染数据
         const ItemOptions = this.createOptions(h)
+        // 
+        const ItemLine = this.createLine(h)
 
         return (
             <div class="sapi-status-mark_item" style={this.wrapStyle}>
@@ -181,7 +212,7 @@ export default {
                     {ItemContent}
                     {ItemOptions}
                 </div>
-                <div class="sapi-status-mark_item-line" style={this.lineStyle}></div>
+                {ItemLine}
             </div>
         )
     }
