@@ -71,9 +71,10 @@
                         color: 'gray',
                         icon: 'el-icon-monitor',
                         iconStyle: {
-                            borderRadius: '4px'
+                            borderRadius: '4px',
+                            fontSize: '16px'
                         },
-                        dotSize: 24,
+                        dotSize:24,
                         lineType: 'solid'
                     },
                     ' 2 , 5 ': {

@@ -74,7 +74,7 @@
                 type: Boolean,
                 default: false
             },
-            // 两点间间隙, type为horizontal为固定间距，type为vertical为最小间距
+            // 两点间间隙, type为horizontal(横向)为固定间距，type为vertical(竖向)为最小间距
             gap: {
                 type: Number,
                 default: 100
