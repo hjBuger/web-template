@@ -48,7 +48,7 @@ export default {
             const style = {
                 lineHeight: this.dotSize + 'px',
             }
-            if (this.item.clickable) {
+            if (this.clickable) {
                 style.cursor = 'pointer'
             }
             if (this.horizontal) {

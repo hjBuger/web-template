@@ -13,6 +13,7 @@
                 line-color-inherit
                 :status-map="statusMap"
                 :line-visible="true"
+                @item-click="itemClick"
             >
                 <template #statusBarPrefix>
                     <el-button>点击</el-button>
@@ -148,6 +149,9 @@
                 }))
 
                 this.markData = markData
+            },
+            itemClick (item) {
+                console.log('itemClick: ', item)
             }
         },
         mounted () {
