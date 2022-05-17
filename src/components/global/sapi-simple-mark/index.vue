@@ -175,12 +175,15 @@
             }
         },
         computed: {
+            // 间隙
             itemGap () {
                 return this.gap + this.maxDotSize
             },
+            // 是否使用el-scrollbar
             scroll () {
                 return this.type === 'vertical' && !!this.height || this.type === 'horizontal'
             },
+            // 容器样式
             contentStyle () {
                 const style = {}
                 if (this.type === 'vertical' && this.height) {
@@ -208,6 +211,7 @@
             horizontal () {
                 return this.sapiSimpleMark.type === 'horizontal'
             },
+            // 实际statusMap
             realStatusMap () {
                 if (this.$utils.isArray(this.statusMap)) return this.statusMap
                 if (this.$utils.isObject(this.statusMap)) {
@@ -239,7 +243,7 @@
             },
             // 检测包含
             checkIncludes (list, val) {
-                if (this.$utils.isString(list)) list = list.split(',')
+                if (this.$utils.isString(list)) list = list.split(',').map(item => item.trim())
                 if (this.$utils.isNumber(list)) list = [list]
                 const listMap = list.reduce((rs, item) => {
                     rs[item] = true

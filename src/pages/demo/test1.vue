@@ -122,7 +122,7 @@
                         color: 'gray',
                         icon: 'el-icon-monitor'
                     },
-                    '2,5': {
+                    ' 2 , 5 ': {
                         value: ['2', '5'],
                         color: 'red',
                         icon: {
@@ -130,7 +130,7 @@
                             content: '进'
                         }
                     },
-                    '3,4': {
+                    '3 , 4': {
                         value: '3,4',
                         color: 'green',
                         icon: {
