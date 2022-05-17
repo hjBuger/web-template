@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="test-block">
-            <sapi-status-mark
+            <sapi-simple-mark
                 :data="markData"
                 title="计划节点"
                 line-type="dashed"
@@ -11,7 +11,7 @@
                 :status-bar-reverse="true"
                 :gap="150"
                 line-color-inherit
-                :status-map="options"
+                :status-map="statusMap"
                 :line-visible="true"
             >
                 <template #statusBarPrefix>
@@ -26,7 +26,7 @@
                     <div style="color:red;">{{props.$index}}</div>
                     测试新的组件标题测试新的组件标题测试新的组件标题测试新的组件标题
                 </template>
-            </sapi-status-mark>
+            </sapi-simple-mark>
         </div>
     </div>
 </template>
@@ -115,7 +115,30 @@
                         },
                         lineType: 'solid'
                     }
-                ]
+                ],
+                statusMap: {
+                    1: {
+                        value: '1',
+                        color: 'gray',
+                        icon: 'el-icon-monitor'
+                    },
+                    '2,5': {
+                        value: ['2', '5'],
+                        color: 'red',
+                        icon: {
+                            type: 'text',
+                            content: '进'
+                        }
+                    },
+                    '3,4': {
+                        value: '3,4',
+                        color: 'green',
+                        icon: {
+                            type: 'img',
+                            content: 'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fdingyue.ws.126.net%2F2020%2F0515%2F465567a6j00qadpfz001cc000hs00b4c.jpg&refer=http%3A%2F%2Fdingyue.ws.126.net&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1654769533&t=64e379f7a431131b5bcd1e1571d19213'
+                        }
+                    }
+                }
             }
         }
     }

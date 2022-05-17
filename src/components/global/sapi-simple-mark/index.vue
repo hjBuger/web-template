@@ -23,7 +23,6 @@
              * value {string|number} 标记值, 如id
              * content {string} 内容
              * status {string|number} 状态值
-             * statusName {string} 状态名称
              * statusColor {string} 状态颜色
              * 
              * labelStyle {object} 标题样式控制 { color: red }
@@ -139,9 +138,9 @@
             /** 
              * 状态匹配数据
              * {
-             *      statusName: '未开始',
-             *      status: '1', // 支持多状态值: 1或1,2,3或[1,2,3]
-             *      statusColor: 'red'
+             *      label: '未开始',
+             *      value: '1', // 支持多状态值: 1或1,2,3或[1,2,3]
+             *      color: 'red'
              * 
              *      labelStyle {object} 标题样式控制 { color: red }
              *      icon {string|object} 图标，传字符串默认为类名控制的图标
@@ -164,7 +163,7 @@
              * }
              */
             statusMap: {
-                type: Array,
+                type: [Array, Object],
                 default () {
                     return []
                 }
@@ -195,7 +194,7 @@
             },
             // 状态栏数据项
             statusBarOptions () {
-                return this.statusMap.filter(item => {
+                return this.realStatusMap.filter(item => {
                     return item.hasOwnProperty('visible') ? item.visible : true
                 }).map(item => {
                     const iconStyle = this.getIconStyle(item)
@@ -208,12 +207,28 @@
             // 是否水平
             horizontal () {
                 return this.sapiSimpleMark.type === 'horizontal'
+            },
+            realStatusMap () {
+                if (this.$utils.isArray(this.statusMap)) return this.statusMap
+                if (this.$utils.isObject(this.statusMap)) {
+                    const statusMap = JSON.parse(JSON.stringify(this.statusMap))
+                    const entries = Object.entries(statusMap)
+                    const realMap = []
+                    for (let [value, item] of entries) {
+                        realMap.push({
+                            ...item,
+                            value
+                        })
+                    }
+                    return realMap
+                }
+                return []
             }
         },
         methods: {
             // 获取状态设置
             getStatus (val) {
-                return this.statusMap.find(item => this.checkIncludes(item.value, val)) || {
+                return this.realStatusMap.find(item => this.checkIncludes(item.value, val)) || {
                     label: null,
                     value: null,
                     color: null,
@@ -239,8 +254,8 @@
             // 生成内容
             createContent (h) {
                 const mark = this.createMark(h)
-                const content = this.scroll ? [<el-scrollbar class="el-scrollbar_style-handle"><div class="sapi-status-mark_content-wrap">{mark}</div></el-scrollbar>] : mark
-                const contentItem = <div class="sapi-status-mark_content">{content}</div>
+                const content = this.scroll ? [<el-scrollbar class="el-scrollbar_style-handle"><div class="sapi-simple-mark_content-wrap">{mark}</div></el-scrollbar>] : mark
+                const contentItem = <div class="sapi-simple-mark_content">{content}</div>
                 return mark.length ? [contentItem] : []
             },
             // 生成标记item
@@ -251,38 +266,38 @@
             createHeader (h) {
                 const header = []
                 if (this.title) {
-                    header.push(<div class="sapi-status-mark_title">{this.title}</div>)
+                    header.push(<div class="sapi-simple-mark_title">{this.title}</div>)
                 }
                 if (this.showStatusBar && this.statusBarOptions.length || this.$scopedSlots.statusBarPrefix || this.$scopedSlots.statusBarSuffix) {
                     const style = {}
                     if (this.statusBarReverse) style.justifyContent = 'flex-end'
                     const StatusBarContent = !this.showStatusBar || !this.statusBarOptions.length ? '' : (
-                        <div class="sapi-status-mark_statusBar-content">
+                        <div class="sapi-simple-mark_statusBar-content">
                             {
                                 (this.statusBarOptions || []).map(option => (
-                                    <div class="sapi-status-mark_statusBar-item">
+                                    <div class="sapi-simple-mark_statusBar-item">
                                         {option.createIcon(h)}
-                                        <div class="sapi-status-mark_statusBar-item-label">{option.label}</div>
+                                        <div class="sapi-simple-mark_statusBar-item-label">{option.label}</div>
                                     </div>
                                 ))
                             }
                         </div>
                     )
                     const StatusBarPrefix = !this.$scopedSlots.statusBarPrefix ? '' : (
-                        <div class="sapi-status-mark_statusBar-prefix">{this.$scopedSlots.statusBarPrefix()}</div>
+                        <div class="sapi-simple-mark_statusBar-prefix">{this.$scopedSlots.statusBarPrefix()}</div>
                     )
                     const StatusBarSuffix = !this.$scopedSlots.statusBarSuffix ? '' : (
-                        <div class="sapi-status-mark_statusBar-suffix">{this.$scopedSlots.statusBarSuffix()}</div>
+                        <div class="sapi-simple-mark_statusBar-suffix">{this.$scopedSlots.statusBarSuffix()}</div>
                     )
                     header.push(
-                        <div class="sapi-status-mark_statusBar" style={style}>
+                        <div class="sapi-simple-mark_statusBar" style={style}>
                             {StatusBarPrefix}
                             {StatusBarContent}
                             {StatusBarSuffix}
                         </div>
                     )
                 }
-                const headerItem = <div class="sapi-status-mark_header">{header}</div>
+                const headerItem = <div class="sapi-simple-mark_header">{header}</div>
 
                 return header.length ? [headerItem] : []
             },
@@ -293,7 +308,7 @@
                 }
                 if (this.$utils.isObject(icon)) {
                     if (icon.type === 'icon') return <i class={icon.content}></i>
-                    if (icon.type === 'text') return <i class="sapi-status-mark_item-mark-text">{icon.content}</i>
+                    if (icon.type === 'text') return <i class="sapi-simple-mark_item-mark-text">{icon.content}</i>
                     if (icon.type === 'img') {
                         if (this.$utils.isString(icon.content)) return <img src={icon.content}></img>
                         if (this.$utils.isObject(icon.content)) return <img src={this.getImgUrl(icon.content)}></img>
@@ -312,7 +327,7 @@
                 const IconHolder = this.getIcon(h, icon)
                 // icon渲染
                 const ItemIcon = (
-                    <div class="sapi-status-mark_item-mark-inner">
+                    <div class="sapi-simple-mark_item-mark-inner">
                         {IconHolder}
                     </div>
                 )
@@ -321,8 +336,8 @@
                     if (content) {
                         style.cursor = 'help'
                         return (
-                            <div class="sapi-status-mark_item-mark" style={style}>
-                                <el-tooltip placement="right" effect="light" popper-class="sapi-status-mark_tip">
+                            <div class="sapi-simple-mark_item-mark" style={style}>
+                                <el-tooltip placement="right" effect="light" popper-class="sapi-simple-mark_tip">
                                     <div slot="content">{content}</div>
                                     {ItemIcon}
                                 </el-tooltip>
@@ -331,7 +346,7 @@
                     }
                 }
                 return (
-                    <div class="sapi-status-mark_item-mark" style={style}>
+                    <div class="sapi-simple-mark_item-mark" style={style}>
                         {ItemIcon}
                     </div>
                 )
@@ -352,7 +367,7 @@
             const header = this.createHeader(h)
             const content = this.createContent(h)
             return (
-                <div class={`sapi-status-mark sapi-status-mark_${this.type}`} style={this.contentStyle}>
+                <div class={`sapi-simple-mark sapi-simple-mark_${this.type}`} style={this.contentStyle}>
                     {header}
                     {content}
                 </div>
@@ -361,73 +376,73 @@
     }
 </script>
 <style lang="less">
-    .sapi-status-mark{
+    .sapi-simple-mark{
         display: flex;
         flex-direction: column;
         align-items: flex-start;
-        .sapi-status-mark_header{
+        .sapi-simple-mark_header{
             width: 100%;
             flex-shrink: 0;
             margin-bottom: 25px;
         }
-        .sapi-status-mark_title{
+        .sapi-simple-mark_title{
             width: 100%;
             font-size: 20px;
             line-height: 24px;
             overflow: hidden;
             margin-bottom: 10px;
         }
-        .sapi-status-mark_statusBar{
+        .sapi-simple-mark_statusBar{
             width: 100%;
             display: flex;
             color: #999999;
             font-size: 12px;
             align-content: center;
         }
-        .sapi-status-mark_statusBar-prefix,
-        .sapi-status-mark_statusBar-suffix{
+        .sapi-simple-mark_statusBar-prefix,
+        .sapi-simple-mark_statusBar-suffix{
             flex-shrink: 0;
         }
-        .sapi-status-mark_statusBar-prefix{
-            & + .sapi-status-mark_statusBar-content,
-            & + .sapi-status-mark_statusBar-suffix{
+        .sapi-simple-mark_statusBar-prefix{
+            & + .sapi-simple-mark_statusBar-content,
+            & + .sapi-simple-mark_statusBar-suffix{
                 margin-left: 15px;
             }
         }
-        .sapi-status-mark_statusBar-content{
+        .sapi-simple-mark_statusBar-content{
             display: flex;
-            & + .sapi-status-mark_statusBar-suffix{
+            & + .sapi-simple-mark_statusBar-suffix{
                 margin-left: 15px;
             }
         }
-        .sapi-status-mark_statusBar-item{
+        .sapi-simple-mark_statusBar-item{
             display: flex;
             align-items: center;
             user-select: none;
             overflow: hidden;
-            .sapi-status-mark_item-mark{
+            .sapi-simple-mark_item-mark{
                 position: relative;
                 top: 0;
                 left: 0;
             }
-            .sapi-status-mark_statusBar-item-status{
+            .sapi-simple-mark_statusBar-item-status{
                 width: 12px;
                 height: 12px;
                 border-radius: 50%;
             }
-            .sapi-status-mark_statusBar-item-label{
+            .sapi-simple-mark_statusBar-item-label{
                 margin-left: 4px;
             }
-            & + .sapi-status-mark_statusBar-item{
+            & + .sapi-simple-mark_statusBar-item{
                 margin-left: 15px;
             }
         }
-        .sapi-status-mark_content{
+        .sapi-simple-mark_content{
             max-width: 100%;
             flex: auto;
             overflow: hidden;
         }
-        .sapi-status-mark_item{
+        .sapi-simple-mark_item{
             width: 100%;
             box-sizing: border-box;
             position: relative;
@@ -435,18 +450,18 @@
             padding-right: 10px;
             // overflow: hidden;
             &:last-of-type{
-                .sapi-status-mark_item-line{
+                .sapi-simple-mark_item-line{
                     display: none;
                 }
             }
         }
-        .sapi-status-mark_item-mark,
-        .sapi-status-mark_item-line{
+        .sapi-simple-mark_item-mark,
+        .sapi-simple-mark_item-line{
             position: absolute;
             top: 0;
             left: 0;
         }
-        .sapi-status-mark_item-mark{
+        .sapi-simple-mark_item-mark{
             z-index: 10;
             border-radius: 50%;
             display: flex;
@@ -459,7 +474,7 @@
                 font-style: normal;
             }
         }
-        .sapi-status-mark_item-mark-inner{
+        .sapi-simple-mark_item-mark-inner{
             width: 100%;
             height: 100%;
             transform: scale(0.8);
@@ -479,13 +494,13 @@
                 margin: 0 auto;
             }
         }
-        .sapi-status-mark_item-label,
-        .sapi-status-mark_item-content,
-        .sapi-status-mark_item-options{
+        .sapi-simple-mark_item-label,
+        .sapi-simple-mark_item-content,
+        .sapi-simple-mark_item-options{
             width: 100%;
             font-size: 14px;
         }
-        .sapi-status-mark_item-label{
+        .sapi-simple-mark_item-label{
             color: #303133;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -494,13 +509,13 @@
             user-select: none;
         }
 
-        .sapi-status-mark_item-content{
+        .sapi-simple-mark_item-content{
             margin-top: 10px;
             color: #909399;
             line-height: 18px;
         }
 
-        .sapi-status-mark_item-options{
+        .sapi-simple-mark_item-options{
             display: flex;
             flex-direction: column;
             align-items: flex-start;
@@ -508,30 +523,30 @@
             margin-top: 10px;
             line-height: 18px;
         }
-        .sapi-status-mark_item-line{
+        .sapi-simple-mark_item-line{
             z-index: 5;
             height: 100%;
             background: #909399;
             transform: translateX(-50%);
         }
-        &.sapi-status-mark_vertical{
+        &.sapi-simple-mark_vertical{
 
         }
-        &.sapi-status-mark_horizontal{
+        &.sapi-simple-mark_horizontal{
             width: 100%;
-            .sapi-status-mark_content-wrap{
+            .sapi-simple-mark_content-wrap{
                 display: flex;
                 flex-flow: nowrap;
                 flex-direction: row;
                 padding-bottom: 18px;
             }
-            .sapi-status-mark_item{
+            .sapi-simple-mark_item{
                 display: flex;
                 flex-direction: row;
                 flex-shrink: 0;
                 width: auto;
             }
-            .sapi-status-mark_item-label{
+            .sapi-simple-mark_item-label{
                 font-size: 14px;
                 display: flex;
                 align-items: center;
@@ -541,12 +556,12 @@
                 flex-direction: column;
                 margin-right: 10px;
             }
-            .sapi-status-mark_content-block{
+            .sapi-simple-mark_content-block{
                 flex: auto;
                 max-width: 100%;
                 overflow: hidden;
             }
-            .sapi-status-mark_item-content{
+            .sapi-simple-mark_item-content{
                 margin-top: 0;
                 max-width: 100%;
                 overflow: hidden;
@@ -555,12 +570,12 @@
                     white-space: normal;
                 }
             }
-            .sapi-status-mark_item-line{
+            .sapi-simple-mark_item-line{
                 width: 100%;
             }
         }
     }
-    .el-tooltip__popper.sapi-status-mark_tip{
+    .el-tooltip__popper.sapi-simple-mark_tip{
         max-width: 300px;
         line-height: 18px;
         color: #909399;

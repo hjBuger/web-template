@@ -66,7 +66,7 @@ export default {
         },
         //  mark背景色
         statusColor () {
-            return this.item.statusColor || this.iconStyle.background || this.status.color
+            return this.item.statusColor || this.status.color
         },
         // icon样式配置
         iconStyle () {
@@ -158,7 +158,7 @@ export default {
         createContent (h, tipTemplate) {
             if (this.contentShowType === 'tip' && !tipTemplate || !!this.sapiSimpleMark.renderTemplate && !this.content) return ''
             return (
-                <div class="sapi-status-mark_item-content">
+                <div class="sapi-simple-mark_item-content">
                     {this.sapiSimpleMark.renderTemplate ? this.sapiSimpleMark.renderTemplate({ item: this.item, data: this.item.data || {}, $index: this.index }) : this.content}
                 </div>
             )
@@ -167,7 +167,7 @@ export default {
             const realStyle = {
                 ...this.labelStyle
             }
-            const className = `sapi-status-mark_item-label ${this.clickable && this.sapiSimpleMark.clickableClass ? this.sapiSimpleMark.clickableClass : ''}`
+            const className = `sapi-simple-mark_item-label ${this.clickable && this.sapiSimpleMark.clickableClass ? this.sapiSimpleMark.clickableClass : ''}`
             const content = !this.horizontal ? this.item.label : (this.item.label.split('') || []).map(text => <div>{text}</div>)
 
             return <div class={className} style={realStyle} onClick={this.itemClick}>{content}</div>
@@ -175,10 +175,10 @@ export default {
         createOptions (h) {
             if (!this.item.options || !this.item.options.length) return ''
             return (
-                <div class="sapi-status-mark_item-options">
+                <div class="sapi-simple-mark_item-options">
                     {
                         (this.item.options || []).map(option => (
-                            <div class="sapi-status-mark_item-options-item">{option.label ? `${option.label}：` : ''}{option.value}</div>
+                            <div class="sapi-simple-mark_item-options-item">{option.label ? `${option.label}：` : ''}{option.value}</div>
                         ))
                     }
                 </div>
@@ -186,7 +186,7 @@ export default {
         },
         createLine (h) {
             if (!this.lineVisible) return ''
-            return <div class="sapi-status-mark_item-line" style={this.lineStyle}></div>
+            return <div class="sapi-simple-mark_item-line" style={this.lineStyle}></div>
         }
     },
     created () {
@@ -205,10 +205,10 @@ export default {
         const ItemLine = this.createLine(h)
 
         return (
-            <div class="sapi-status-mark_item" style={this.wrapStyle}>
+            <div class="sapi-simple-mark_item" style={this.wrapStyle}>
                 {IconHolder}
                 {ItemLabel}
-                <div class="sapi-status-mark_content-block">
+                <div class="sapi-simple-mark_content-block">
                     {ItemContent}
                     {ItemOptions}
                 </div>
