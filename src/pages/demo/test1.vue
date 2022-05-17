@@ -146,6 +146,7 @@
                     status: item.status,
                     content: item.date
                 }))
+
                 this.markData = markData
             }
         },

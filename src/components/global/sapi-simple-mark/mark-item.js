@@ -155,14 +155,16 @@ export default {
             }
             this.sapiSimpleMark.$emit('item-click', this.item)
         },
+        // 生成content
         createContent (h, tipTemplate) {
-            if (this.contentShowType === 'tip' && !tipTemplate || !!this.sapiSimpleMark.renderTemplate && !this.content) return ''
+            if (this.contentShowType === 'tip' && !tipTemplate || !this.sapiSimpleMark.renderTemplate && this.$utils.isEmpty(this.content)) return ''
             return (
                 <div class="sapi-simple-mark_item-content">
                     {this.sapiSimpleMark.renderTemplate ? this.sapiSimpleMark.renderTemplate({ item: this.item, data: this.item.data || {}, $index: this.index }) : this.content}
                 </div>
             )
         },
+        // 生成label
         createLabel (h) {
             const realStyle = {
                 ...this.labelStyle
@@ -172,6 +174,7 @@ export default {
 
             return <div class={className} style={realStyle} onClick={this.itemClick}>{content}</div>
         },
+        // 生成其他渲染项
         createOptions (h) {
             if (!this.item.options || !this.item.options.length) return ''
             return (
@@ -184,6 +187,7 @@ export default {
                 </div>
             )
         },
+        // 生成线条
         createLine (h) {
             if (!this.lineVisible) return ''
             return <div class="sapi-simple-mark_item-line" style={this.lineStyle}></div>
@@ -201,17 +205,21 @@ export default {
         const ItemContent = this.createContent(h)
         // 其他渲染数据
         const ItemOptions = this.createOptions(h)
-        // 
+        // 线条
         const ItemLine = this.createLine(h)
+        // 内容块
+        const ContentBlock = ItemContent || ItemOptions ? (
+            <div class="sapi-simple-mark_content-block">
+                {ItemContent}
+                {ItemOptions}
+            </div>
+        ) : ''
 
         return (
             <div class="sapi-simple-mark_item" style={this.wrapStyle}>
                 {IconHolder}
                 {ItemLabel}
-                <div class="sapi-simple-mark_content-block">
-                    {ItemContent}
-                    {ItemOptions}
-                </div>
+                {ContentBlock}
                 {ItemLine}
             </div>
         )
