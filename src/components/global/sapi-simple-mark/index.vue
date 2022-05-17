@@ -451,7 +451,6 @@
             position: relative;
             padding-bottom: 20px;
             padding-right: 10px;
-            // overflow: hidden;
             &:last-of-type{
                 .sapi-simple-mark_item-line{
                     display: none;
