@@ -16,15 +16,14 @@
                 default: 'vertical'
             },
             /**
-             * 数据源data，以下是item的构造属性
+             * 数据源data，以下是数据item的构造属性
              * 
              * data {object} 原始数据对象
              * label {string} 标题
              * value {string|number} 标记值, 如id
-             * content {string} 内容
              * status {string|number} 状态值
+             * content {string} 内容
              * statusColor {string} 状态颜色
-             * 
              * labelStyle {object} 标题样式控制 { color: red }
              * icon {string|object} 图标，传字符串默认为类名控制的图标
              *  --img类型时,content支持:
