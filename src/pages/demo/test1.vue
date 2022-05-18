@@ -2,72 +2,17 @@
     <div>
         <div class="test-block">
             <sapi-simple-mark
-                :data="markData"
-                title="计划节点_横向"
-                line-type="dashed"
-                content-show-type="normal"
-                type="horizontal"
-                :show-status-bar="true"
-                :status-bar-reverse="true"
-                :gap="150"
-                line-color-inherit
-                :status-map="statusMap"
-                :line-visible="true"
-                @item-click="itemClick"
-            >
-                <template #statusBarPrefix>
-                    <el-button>点击</el-button>
-                </template>
-                <template #statusBarSuffix>
-                    <el-button>点击</el-button>
-                </template>
-                <template v-slot="props">
-                    <div style="color:red;">label：{{props.item.label}}</div>
-                    <div style="color:blue;">原始数据名称：{{props.data.name}}</div>
-                    <div style="color:green;margin-bottom: 10px;">序号：{{props.$index}}</div>
-                    内容插槽测试...
-                </template>
-            </sapi-simple-mark>
-            <sapi-simple-mark
-                style="margin-top: 20px;"
-                :data="markData"
-                title="计划节点_竖向"
-                line-type="dashed"
-                content-show-type="normal"
-                type="vertical"
-                :show-status-bar="true"
-                :status-bar-reverse="true"
-                :gap="150"
-                line-color-inherit
-                :status-map="statusMap"
-                :line-visible="true"
-            >
-                <template #statusBarPrefix>
-                    <el-button>点击</el-button>
-                </template>
-                <template #statusBarSuffix>
-                    <el-button>点击</el-button>
-                </template>
-                <template v-slot="props">
-                    <div style="color:red;">label：{{props.item.label}}</div>
-                    <div style="color:blue;">原始数据名称：{{props.data.name}}</div>
-                    <div style="color:green;margin-bottom: 10px;">序号：{{props.$index}}</div>
-                    内容插槽测试...
-                </template>
-            </sapi-simple-mark>
-            <sapi-simple-mark
-                :data="pomData"
                 title="计划节点_模拟"
-                content-show-type="normal"
                 type="horizontal"
-                :show-status-bar="true"
-                :status-bar-reverse="true"
-                :gap="65"
                 line-color="#458aff"
-                :status-map="pomStatusMap"
-                :line-visible="true"
-                @item-click="itemClick"
+                :data="list"
+                :show-status-bar="true"
+                :gap="65"
                 :dot-size="12"
+                :status-map="statusMap"
+                :extend-config="extendConfig"
+                :props="props"
+                @item-click="itemClick"
             >
                 <template #statusBarSuffix>
                     <el-button>里程碑节点对比</el-button>
@@ -81,71 +26,10 @@
         menuLabel: '测试1',
         data () {
             return {
-                markData: [],
-                pomData: [],
-                // 状态匹配（对象）
-                statusMap: {
-                    1: {
-                        label: '未开始',
-                        color: 'gray',
-                        icon: 'el-icon-monitor',
-                        iconStyle: {
-                            borderRadius: '4px',
-                            fontSize: '16px'
-                        },
-                        dotSize:24,
-                        lineType: 'solid'
-                    },
-                    ' 2 , 5 ': {
-                        label: '进行中',
-                        color: 'red',
-                        icon: {
-                            type: 'text',
-                            content: '进'
-                        }
-                    },
-                    '3 , 4': {
-                        label: '已完成',
-                        color: 'green',
-                        icon: {
-                            type: 'img',
-                            content: 'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fdingyue.ws.126.net%2F2020%2F0515%2F465567a6j00qadpfz001cc000hs00b4c.jpg&refer=http%3A%2F%2Fdingyue.ws.126.net&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1654769533&t=64e379f7a431131b5bcd1e1571d19213'
-                        }
-                    }
-                },
-                // 状态匹配（数组）
-                statusMap2: [
-                    {
-                        label: '未开始',
-                        value: '1',
-                        color: 'gray',
-                        icon: 'el-icon-monitor',
-                        iconStyle: {
-                            borderRadius: '4px'
-                        },
-                        dotSize: 24,
-                        lineType: 'solid'
-                    },
-                    {
-                        label: '进行中',
-                        value: ['2', '5'],
-                        color: 'red',
-                        icon: {
-                            type: 'text',
-                            content: '进'
-                        }
-                    },
-                    {
-                        label: '已完成',
-                        value: '3,4',
-                        color: 'green',
-                        icon: {
-                            type: 'img',
-                            content: 'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fdingyue.ws.126.net%2F2020%2F0515%2F465567a6j00qadpfz001cc000hs00b4c.jpg&refer=http%3A%2F%2Fdingyue.ws.126.net&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1654769533&t=64e379f7a431131b5bcd1e1571d19213'
-                        }
-                    }
-                ],
-                pomStatusMap: [
+                // 数据源
+                list: [],
+                // 状态匹配
+                statusMap: [
                     {
                         label: '正常',
                         value: 1,
@@ -175,35 +59,34 @@
                             color: '#bdbebf'
                         }
                     }
-                ]
+                ],
+                // 字段匹配
+                props: {
+                    label: 'name',
+                    value: 'id',
+                    status: 'status'
+                }
             }
         },
         methods: {
-            loadData () {
-                // 数据源
-                const demo = [
-                    {id: '1', name: '拿地', status: 1, date: '2022-05-10'},
-                    {id: '2', name: '项目立项会', status: 2, date: '2022-05-10'},
-                    {id: '3', name: '项目预备会', status: 3, date: '2022-05-10'},
-                    {id: '4', name: '项目启动会', status: 4, date: '2022-05-10'},
-                    {id: '5', name: '总包开工', status: 5, date: '2022-05-10'},
-                    {id: '6', name: '总包开工2', status: 3, date: '2022-05-10'}
-                ]
-
-                // 根据业务自由构造数据，底层组件只做数据渲染，不做逻辑处理
-                const markData = demo.map(item => ({
-                    data: item,
-                    label: item.name,
-                    value: item.id,
-                    status: item.status,
-                    content: item.date
-                }))
-
-                this.markData = markData
+            // 扩展配置
+            extendConfig (item, index) {
+                let config = {}
+                if (item.lcb) {
+                    config = {
+                        icon: 'el-icon-s-flag',
+                        labelStyle: {
+                            fontWeight: 'bold',
+                            color: '#333333'
+                        },
+                        dotSize: 16
+                    }
+                }
+                return config
             },
-            loadPomData () {
-                // 数据源
-                const demo = [
+            // 获取数据源
+            loadData () {
+                this.list = [
                     {id: '1', name: '拿地', status: 1, lcb: true},
                     {id: '2', name: '项目立项会', status: 1},
                     {id: '3', name: '项目预备会', status: 2},
@@ -220,42 +103,14 @@
                     {id: '14', name: '集中交付', status: 5, lcb: true},
                     {id: '15', name: '初始登记', status: 5},
                 ]
-
-                // 根据业务自由构造数据，底层组件只做数据渲染，不做逻辑处理
-                const pomData = demo.map(item =>{
-                    let config = {}
-                    if (item.lcb) {
-                        config = {
-                            icon: 'el-icon-s-flag',
-                            // icon: {
-                            //     type: 'img',
-                            //     content: 'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fdingyue.ws.126.net%2F2020%2F0515%2F465567a6j00qadpfz001cc000hs00b4c.jpg&refer=http%3A%2F%2Fdingyue.ws.126.net&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1654769533&t=64e379f7a431131b5bcd1e1571d19213'
-                            // },
-                            labelStyle: {
-                                fontWeight: 'bold',
-                                color: '#333333'
-                            },
-                            dotSize: 16
-                        }
-                    }
-                    return {
-                        data: item,
-                        label: item.name,
-                        value: item.id,
-                        status: item.status,
-                        ...config
-                    }
-                })
-
-                this.pomData = pomData
             },
+            // 点击方法
             itemClick (item) {
                 console.log('itemClick: ', item)
             }
         },
         mounted () {
             this.loadData()
-            this.loadPomData()
         }
     }
 </script>

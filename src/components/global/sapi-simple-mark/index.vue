@@ -10,44 +10,17 @@
             }
         },
         props: {
-            // 竖向-vertical, 横向-horizontal
-            type: {
-                type: String,
-                default: 'vertical'
-            },
-            /**
-             * 数据源data，以下是数据item的构造属性
-             * 
-             * data {object} 原始数据对象
-             * label {string} 标题
-             * value {string|number} 标记值, 如id
-             * status {string|number} 状态值
-             * content {string} 内容
-             * statusColor {string} 状态颜色
-             * labelStyle {object} 标题样式控制 { color: red }
-             * icon {string|object} 图标，传字符串默认为类名控制的图标
-             *  --img类型时,content支持:
-             *      -- 图片路径
-             *      -- 服务器储存对象{fileId: '', filePath: '', ...}
-             *      -- base64
-             *  {
-             *      type: 'icon', // icon、text、img
-	         *      content: 'el-icon-monitor'
-             *  }
-             * iconStyle {object} 图标容器样式控制 { borderRadius: '4px' }
-             * lineColor {string} 线条颜色
-             * lineType {string} 线条类型：solid-实线、dotted-点线、dashed-虚线
-             * lineVisible {boolean} 线条显示
-             * dotSize {number} mark点尺寸
-             * clickable {boolean} 是否可点击
-             * clickFn {function} 独立的点击方法
-             * 
-            */
+            // 数据源
             data: {
                 type: Array,
                 default () {
                     return []
                 }
+            },
+            // 竖向-vertical, 横向-horizontal
+            type: {
+                type: String,
+                default: 'vertical'
             },
             // 标题
             title: {
@@ -72,7 +45,7 @@
             // 状态栏的显示位置控制
             statusBarReverse: {
                 type: Boolean,
-                default: false
+                default: true
             },
             // 两点间间隙, type为horizontal(横向)为固定间距，type为vertical(竖向)为最小间距
             gap: {
@@ -139,8 +112,8 @@
              * {
              *      label: '未开始',
              *      value: '1', // 支持多状态值: 1或1,2,3或[1,2,3]
-             *      color: 'red'
              * 
+             *      color: 'red'
              *      labelStyle {object} 标题样式控制 { color: red }
              *      icon {string|object} 图标，传字符串默认为类名控制的图标
              *          --img类型时,content支持:
@@ -166,14 +139,40 @@
                 default () {
                     return []
                 }
+            },
+            // 字段匹配对象：{ label: 'label', value: 'value', status: 'status', content: 'content' }
+            props: {
+                type: Object,
+                default () {
+                    return {}
+                }
+            },
+            // 扩展配置方法，返回一个对象，与状态匹配的设置基本相同，除了label和value， (item, index) => { labelStyle: {}, icon: ''}
+            extendConfig: {
+                type: Function
             }
         },
         data () {
             return {
-                maxDotSize: 0
+                // 最大尺寸
+                maxDotSize: 0,
+                // 默认字段匹配
+                defaultProps: {
+                    label: 'label',
+                    value: 'value',
+                    status: 'status',
+                    content: 'content'
+                }
             }
         },
         computed: {
+            // 实际字段匹配
+            realProps () {
+                return {
+                    ...this.defaultProps,
+                    ...(this.props || {})
+                }
+            },
             // 间隙
             itemGap () {
                 return this.gap + this.maxDotSize
@@ -263,7 +262,7 @@
             },
             // 生成标记item
             createMark (h) {
-                return (this.data || []).map((item, index) => <mark-item item={item} index={index} key={item.value}></mark-item>)
+                return (this.data || []).map((item, index) => <mark-item item={item} index={index} key={item[this.realProps.value]}></mark-item>)
             },
             // 生成头部
             createHeader (h) {

@@ -12,6 +12,14 @@ export default {
         }
     },
     computed: {
+        // 字段匹配
+        realProps () {
+            return this.sapiSimpleMark.realProps
+        },
+        // 扩展配置
+        extendConfig () {
+            return this.sapiSimpleMark.extendConfig && this.$utils.isFunction(this.sapiSimpleMark.extendConfig) ? this.sapiSimpleMark.extendConfig(this.item, this.index) : {}
+        },
         // 匹配的状态
         status () {
             return this.sapiSimpleMark.getStatus(this.item.status)
@@ -25,7 +33,7 @@ export default {
         },
         // mark尺寸
         dotSize () {
-            return this.item.dotSize || this.status.dotSize || this.sapiSimpleMark.dotSize
+            return this.extendConfig.dotSize || this.status.dotSize || this.sapiSimpleMark.dotSize
         },
         // mark最大尺寸
         maxDotSize () {
@@ -43,7 +51,7 @@ export default {
             const outSideStyle = {
                 ...(this.sapiSimpleMark.labelStyle || {}),
                 ...(this.status.labelStyle || {}),
-                ...(this.item.labelStyle || {})
+                ...(this.extendConfig.labelStyle || {})
             }
             const style = {
                 lineHeight: this.dotSize + 'px',
@@ -66,14 +74,14 @@ export default {
         },
         //  mark背景色
         statusColor () {
-            return this.item.statusColor || this.status.color
+            return this.extendConfig.color || this.status.color
         },
         // icon样式配置
         iconStyle () {
             return {
                 ...(this.sapiSimpleMark.iconStyle || {}),
                 ...(this.status.iconStyle || {}),
-                ...(this.item.iconStyle || {})
+                ...(this.extendConfig.iconStyle || {})
             }
         },
         // icon样式控制
@@ -92,16 +100,16 @@ export default {
         },
         // 线条颜色
         lineColor () {
-            return this.item.lineColor || this.status.lineColor || (this.sapiSimpleMark.lineColorInherit ? this.statusColor : this.sapiSimpleMark.lineColor)
+            return this.extendConfig.lineColor || this.status.lineColor || (this.sapiSimpleMark.lineColorInherit ? this.statusColor : this.sapiSimpleMark.lineColor)
         },
         // 线条显示
         lineVisible () {
-            return this.item.hasOwnProperty('lineVisible') ? this.item.lineVisible : this.status.hasOwnProperty('lineVisible') ?  this.status.lineVisible : this.sapiSimpleMark.lineVisible
+            return this.extendConfig.hasOwnProperty('lineVisible') ? this.extendConfig.lineVisible : this.status.hasOwnProperty('lineVisible') ?  this.status.lineVisible : this.sapiSimpleMark.lineVisible
         },
         // 线条样式控制
         lineStyle () {
             const lineColor = this.lineColor
-            const lineType = this.item.lineType || this.status.lineType || this.sapiSimpleMark.lineType
+            const lineType = this.extendConfig.lineType || this.status.lineType || this.sapiSimpleMark.lineType
             const direction = this.horizontal ? 'right' : 'bottom'
             const style = {
                 left: Math.round(this.dotSize / 2 + this.deviation) + 'px',
@@ -130,20 +138,20 @@ export default {
         },
         // 内容处理
         content () {
-            if (this.$utils.isEmpty(this.item.content)) return ''
-            return this.$utils.safeHtml(this.item.content)
+            if (!this.realProps.content || this.$utils.isEmpty(this.item[this.realProps.content])) return ''
+            return this.$utils.safeHtml(this.item[this.realProps.content])
         },
         // 是否可点击
         clickable () {
-            return this.item.hasOwnProperty('clickable') ? this.item.clickable : this.status.hasOwnProperty('clickable') ?  this.status.clickable : this.sapiSimpleMark.clickable
+            return this.extendConfig.hasOwnProperty('clickable') ? this.extendConfig.clickable : this.status.hasOwnProperty('clickable') ?  this.status.clickable : this.sapiSimpleMark.clickable
         },
         // 点击方法
         clickFn () {
-            return this.item.hasOwnProperty('clickFn') ? this.item.clickFn : this.status.hasOwnProperty('clickFn') ?  this.status.clickFn : null
+            return this.extendConfig.hasOwnProperty('clickFn') ? this.extendConfig.clickFn : this.status.hasOwnProperty('clickFn') ?  this.status.clickFn : null
         },
         // 图标
         icon () {
-            return this.item.icon || this.status.icon || this.sapiSimpleMark.icon || ''
+            return this.extendConfig.icon || this.status.icon || this.sapiSimpleMark.icon || ''
         }
     },
     methods: {
@@ -160,7 +168,7 @@ export default {
             if (this.contentShowType === 'tip' && !tipTemplate || !this.sapiSimpleMark.renderTemplate && this.$utils.isEmpty(this.content)) return ''
             return (
                 <div class="sapi-simple-mark_item-content">
-                    {this.sapiSimpleMark.renderTemplate ? this.sapiSimpleMark.renderTemplate({ item: this.item, data: this.item.data || {}, $index: this.index }) : this.content}
+                    {this.sapiSimpleMark.renderTemplate ? this.sapiSimpleMark.renderTemplate({ item: this.item, $index: this.index }) : this.content}
                 </div>
             )
         },
@@ -169,18 +177,19 @@ export default {
             const realStyle = {
                 ...this.labelStyle
             }
+            const label = this.item[this.realProps.label]
             const className = `sapi-simple-mark_item-label ${this.clickable && this.sapiSimpleMark.clickableClass ? this.sapiSimpleMark.clickableClass : ''}`
-            const content = !this.horizontal ? this.item.label : (this.item.label.split('') || []).map(text => <div>{text}</div>)
+            const content = !this.horizontal ? label : (label.split('') || []).map(text => <div>{text}</div>)
 
             return <div class={className} style={realStyle} onClick={this.itemClick}>{content}</div>
         },
         // 生成其他渲染项
         createOptions (h) {
-            if (!this.item.options || !this.item.options.length) return ''
+            if (!this.extendConfig.options || !this.extendConfig.options.length) return ''
             return (
                 <div class="sapi-simple-mark_item-options">
                     {
-                        (this.item.options || []).map(option => (
+                        (this.extendConfig.options || []).map(option => (
                             <div class="sapi-simple-mark_item-options-item">{option.label ? `${option.label}：` : ''}{option.value}</div>
                         ))
                     }
