@@ -15,7 +15,7 @@
                 @item-click="itemClick"
             >
                 <template #statusBarSuffix>
-                    <el-button>里程碑节点对比</el-button>
+                    <el-button type="primary" plain>里程碑节点对比</el-button>
                 </template>
             </sapi-simple-mark>
         </div>
@@ -72,6 +72,7 @@
             // 扩展配置
             extendConfig (item, index) {
                 let config = {}
+                // 判断里程碑节点
                 if (item.lcb) {
                     config = {
                         icon: 'el-icon-s-flag',
@@ -118,6 +119,7 @@
     .test-block{
         width: 1000px;
         padding: 10px;
+        box-sizing: border-box;
         border-radius: 8px;
         box-shadow: 0 1px 9px #3f3e3e;
         margin: 20px auto;

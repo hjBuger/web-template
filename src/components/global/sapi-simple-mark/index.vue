@@ -230,14 +230,7 @@
         methods: {
             // 获取状态设置
             getStatus (val) {
-                return this.realStatusMap.find(item => this.checkIncludes(item.value, val)) || {
-                    label: null,
-                    value: null,
-                    color: null,
-                    icon: null,
-                    iconStyle: null,
-                    dotSize: null
-                }
+                return this.realStatusMap.find(item => this.checkIncludes(item.value, val)) || { value: val }
             },
             // 检测包含
             checkIncludes (list, val) {

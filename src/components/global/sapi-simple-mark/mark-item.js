@@ -22,7 +22,7 @@ export default {
         },
         // 匹配的状态
         status () {
-            return this.sapiSimpleMark.getStatus(this.item.status)
+            return this.sapiSimpleMark.getStatus(this.item[this.realProps.status])
         },
         // 是否水平
         horizontal () {
