@@ -52,7 +52,7 @@
                 type: Number,
                 default: 100
             },
-            // 标题样式控制
+            // label样式控制
             labelStyle: {
                 type: Object,
                 default: null
@@ -507,6 +507,8 @@
             margin-top: 10px;
             color: #909399;
             line-height: 18px;
+            word-break: break-word;
+            white-space: normal;
         }
 
         .sapi-simple-mark_item-options{
