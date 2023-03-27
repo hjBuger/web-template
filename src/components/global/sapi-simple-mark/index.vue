@@ -207,7 +207,7 @@
             },
             // 是否水平
             horizontal () {
-                return this.sapiSimpleMark.type === 'horizontal'
+                return this.type === 'horizontal'
             },
             // 实际statusMap
             realStatusMap () {
@@ -332,7 +332,7 @@
                         style.cursor = 'help'
                         return (
                             <div class="sapi-simple-mark_item-mark" style={style}>
-                                <el-tooltip placement="right" effect="light" popper-class="sapi-simple-mark_tip">
+                                <el-tooltip placement={this.horizontal ? 'top' : 'right'} effect="light" popper-class="sapi-simple-mark_tip">
                                     <div slot="content">{content}</div>
                                     {ItemIcon}
                                 </el-tooltip>
@@ -393,6 +393,7 @@
             color: #999999;
             font-size: 12px;
             align-content: center;
+            flex-flow: wrap;
         }
         .sapi-simple-mark_statusBar-prefix,
         .sapi-simple-mark_statusBar-suffix{
@@ -406,6 +407,7 @@
         }
         .sapi-simple-mark_statusBar-content{
             display: flex;
+            flex-flow: wrap;
             & + .sapi-simple-mark_statusBar-suffix{
                 margin-left: 15px;
             }
@@ -415,6 +417,7 @@
             align-items: center;
             user-select: none;
             overflow: hidden;
+            flex-shrink: 0;
             .sapi-simple-mark_item-mark{
                 position: relative;
                 top: 0;
@@ -427,6 +430,7 @@
             }
             .sapi-simple-mark_statusBar-item-label{
                 margin-left: 4px;
+                flex-shrink: 0;
             }
             & + .sapi-simple-mark_statusBar-item{
                 margin-left: 15px;

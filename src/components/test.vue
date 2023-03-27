@@ -14,7 +14,9 @@
             }
         },
         data () { 
-            return {}
+            return {
+                visible: true
+            }
         },
         watch: {
             content (val) {
