@@ -1,7 +1,22 @@
 <template>
     <div class="study-test1">
         <div class="test-box">
-            <split-box :list="list">
+            <component-wrap component="split-box" :list="list" ref="wrap">
+                <template v-slot:vue-place>
+                    <div>
+                        vue-place
+                    </div>
+                </template>
+                <template v-slot:footer>
+                    <div>
+                        footer
+                    </div>
+                </template>
+                <div>
+                    main
+                </div>
+            </component-wrap>
+            <!-- <split-box :list="list">
                 <template #vue-place>
                     <t-dm></t-dm>
                 </template>
@@ -16,7 +31,7 @@
                 <div class="btn-bar-item" @click="itemClik('vue')">vue</div>
                 <div class="btn-bar-item" @click="itemClik('js')">js</div>
                 <div class="btn-bar-item" @click="itemClik('css')">css</div>
-            </div>
+            </div> -->
         </div>
     </div>
 </template>
@@ -50,6 +65,10 @@
         created () {
         },
         mounted () {
+            this.$nextTick(function () {
+                this.$refs.wrap.test()
+                this.$refs.wrap.resetPlace()
+            })
         },
         beforeDestroy () {
 
