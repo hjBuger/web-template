@@ -66,8 +66,8 @@
         },
         mounted () {
             this.$nextTick(function () {
-                this.$refs.wrap.test()
-                this.$refs.wrap.resetPlace()
+                // this.$refs.wrap.test()
+                // this.$refs.wrap.resetPlace()
             })
         },
         beforeDestroy () {
