@@ -6,7 +6,7 @@
             <aside class="screen-aside screen-aside-right"></aside>
             
             <section class="screen-viewport">
-                
+                <canvas width="300px" height="300px"></canvas>
             </section>
         </div>
     </div>

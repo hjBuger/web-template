@@ -17,6 +17,7 @@
     "iview": "^3.5.4",
     "lodash.merge": "^4.6.2",
     "sanitize-html": "^2.7.0",
+    "sortablejs": "^1.15.0",
     "vue": "^2.6.11",
     "vue-json-viewer": "^2.2.22",
     "vue-router": "^3.2.0",
