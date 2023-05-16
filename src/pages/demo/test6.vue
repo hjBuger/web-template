@@ -10,7 +10,7 @@
 </template>
 <script>
     import htmlToExcel from './files/test6_excel'
-    import XLSX from 'xlsx'
+    import * as XLSX from 'xlsx'
     export default {
         menuLabel: '测试6',
         data() {

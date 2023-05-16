@@ -1,17 +1,29 @@
 <template>
     <div class="study-test9">
         <div class="test-box">
-            test9
+            <div v-simple-sortable="{ list: this.list, target: $refs.dm }">
+                <div v-for="(item, index) in list" :key="item.name">[{{index}}]: {{item.name}}</div>
+            </div>
         </div>
     </div>
 </template>
 <script>
+    import dm from './components/dm.vue'
     export default {
         menuLabel: '测试9',
-        components: {},
+        components: {
+            dm
+        },
         data() {
             return {
                 test: null,
+                list: [
+                    { name: '1111' },
+                    { name: '2222' },
+                    { name: '3333' },
+                    { name: '4444' },
+                    { name: '5555' },
+                ]
             }
         },
         methods: {
