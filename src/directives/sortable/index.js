@@ -3,7 +3,7 @@ import Sortable from 'sortablejs'
 /**
  * simple-sortable指令
  * @param {Array|Function} list 列表，Function类型需要返回数据，如果list是请求返回，使用Function类型
- * @param {String} target 元素选择器
+ * @param {String} target css选择器
  * @param {Function} onEndAfter 拖拽结束回调方法
  * @param {Object} config sortablejs配置属性，官方文档：http://www.sortablejs.com/options.html
  * */ 
