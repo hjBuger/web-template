@@ -57,6 +57,9 @@ export default {
             ...sortableConfig
         }
 
-        new Sortable(bindingEl, config)
+        el.SortableObj = new Sortable(bindingEl, config)
+    },
+    unbind (el) {
+        el.SortableObj && el.SortableObj.destroy()
     }
 }
